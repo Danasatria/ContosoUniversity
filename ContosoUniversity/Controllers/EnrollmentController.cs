@@ -13,7 +13,7 @@ using System.Data.Entity.Infrastructure;
 
 namespace ContosoUniversity.Controllers
 {
-    public class CourseController : Controller
+    public class EnrollmentController : Controller
     {
         private SchoolContext db = new SchoolContext();
 
@@ -21,48 +21,41 @@ namespace ContosoUniversity.Controllers
         public ViewResult Index(string sortOrder, string currentFilter, string searchString)
         {
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.TitleSortParm = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
-            ViewBag.CreditsSortParm = sortOrder == "Crd" ? "crd_desc" : "Crd";
-            ViewBag.IDSortParm = sortOrder == "Cid" ? "cid_desc" : "Cid";
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.TitleSortParm = sortOrder == "Title" ? "title_desc" : "Title";
+            ViewBag.GradeSortParm = sortOrder == "Grade" ? "grade_desc" : "Grade";
             ViewBag.CurrentFilter = searchString;
-            var courses = from s in db.Courses
-                           select s;
+            var enroll = from s in db.Enrollments
+                         select s;
             if (!String.IsNullOrEmpty(searchString))
             {
-                try
-                {
-                   var angka = int.Parse(searchString);
-                    courses = courses.Where(s => s.Credits == angka);
-                }
-                catch (FormatException)
-                {
-                    courses = courses.Where(s => s.Title.Contains(searchString));
-                }
 
+               enroll = enroll.Where(s => s.Student.LastName.Contains(searchString)
+                                       || s.Course.Title.Contains(searchString));  
             }
-
             switch (sortOrder)
             {
+                case "name_desc":
+                    enroll = enroll.OrderByDescending(s => s.Student.LastName);
+                    break;
                 case "title_desc":
-                    courses = courses.OrderByDescending(s => s.Title);
+                    enroll = enroll.OrderByDescending(s => s.Course.Title);
                     break;
-                case "crd_desc":
-                    courses = courses.OrderByDescending(s => s.Credits);
+                case "Title":
+                    enroll = enroll.OrderBy(s => s.Course.Title);
                     break;
-                case "Crd":
-                    courses = courses.OrderBy(s => s.Credits);
+                case "Grade":
+                    enroll = enroll.OrderBy(s => s.Grade);
                     break;
-                case "cid_desc":
-                    courses = courses.OrderByDescending(s => s.CourseID);
-                    break;
-                case "Cid":
-                    courses = courses.OrderBy(s => s.CourseID);
+                case "grade_desc":
+                    enroll = enroll.OrderByDescending(s => s.Grade);
                     break;
                 default:
-                    courses = courses.OrderBy(s => s.Title);
+                    enroll = enroll.OrderBy(s => s.Student.LastName);
                     break;
             }
-            return View(courses.ToList());
+            var enrollments = db.Enrollments.Include(s => s.Course).Include(s => s.Student);
+            return View(enroll.ToList());
         }
 
         private DateTime? tokenize_and_extract_date_end(string searchString)
@@ -77,12 +70,12 @@ namespace ContosoUniversity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Course course = db.Courses.Find(id);
-            if (course == null)
+            Enrollment enroll = db.Enrollments.Find(id);
+            if (enroll == null)
             {
                 return HttpNotFound();
             }
-            return View(course);
+            return View(enroll);
         }
 
         // GET: Student/Create
@@ -96,13 +89,13 @@ namespace ContosoUniversity.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CourseID, Title, Credits,")] Course course)
+        public ActionResult Create([Bind(Include = "EnrollmentID,CourseID,StudentID,Grade")] Enrollment enroll)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    db.Courses.Add(course);
+                    db.Enrollments.Add(enroll);
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
@@ -113,7 +106,9 @@ namespace ContosoUniversity.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
-            return View(course);
+            ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enroll.CourseID);
+            ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enroll.StudentID);
+            return View(enroll);
         }
 
         // GET: Student/Edit/5
@@ -123,12 +118,15 @@ namespace ContosoUniversity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Course course = db.Courses.Find(id);
-            if (course == null)
+            Enrollment enroll = db.Enrollments.Find(id);
+            if (enroll == null)
             {
                 return HttpNotFound();
             }
-            return View(course);
+
+            ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enroll.CourseID);
+            ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enroll.StudentID);
+            return View(enroll);
         }
 
         // POST: Student/Edit/5
@@ -142,9 +140,9 @@ namespace ContosoUniversity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var courseToUpdate = db.Courses.Find(id);
-            if (TryUpdateModel(courseToUpdate, "",
-               new string[] { "Title", "Credits" }))
+            var enrollToUpdate = db.Enrollments.Find(id);
+            if (TryUpdateModel(enrollToUpdate, "",
+               new string[] { "EnrollmentID", "CourseID", "StudentID", "Grade" }))
             {
                 try
                 {
@@ -158,7 +156,9 @@ namespace ContosoUniversity.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
                 }
             }
-            return View(courseToUpdate);
+            ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollToUpdate.CourseID);
+            ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollToUpdate.StudentID);
+            return View(enrollToUpdate);
         }
 
         // GET: Student/Delete/5
@@ -172,12 +172,12 @@ namespace ContosoUniversity.Controllers
             {
                 ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
             }
-            Course course = db.Courses.Find(id);
-            if (course == null)
+            Enrollment enroll = db.Enrollments.Find(id);
+            if (enroll == null)
             {
                 return HttpNotFound();
             }
-            return View(course);
+            return View(enroll);
         }
 
         // POST: Student/Delete/5
@@ -187,8 +187,8 @@ namespace ContosoUniversity.Controllers
         {
             try
             {
-                Course course = db.Courses.Find(id);
-                db.Courses.Remove(course);
+                Enrollment enroll = db.Enrollments.Find(id);
+                db.Enrollments.Remove(enroll);
                 db.SaveChanges();
             }
             catch (DataException/* dex */)
