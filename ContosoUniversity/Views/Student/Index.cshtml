@@ -6,20 +6,23 @@
     ViewBag.Title = "Students";
 }
 
-<h2>Students</h2>
+<div class="page-header">
+    <h2>Students <small>Data Student</small></h2>
+</div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<hr />
+
 @using (Html.BeginForm("Index", "Student", FormMethod.Get))
 {
     <p>
-        Find by name or Y-M-d: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <small>Find by name or Y-M-d:</small> @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
         <input class="btn btn-info btn-sm" type="submit" value="Search" /> |
         <a>@Html.ActionLink("Back to Full List", "Index", "Student")</a>
     </p>
 }
+<h4>
+    <span class="label label-info">@Html.ActionLink("Create New", "Create")</span>
+</h4>
+
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
         <tr class="info">

@@ -54,6 +54,7 @@ namespace ContosoUniversity.Controllers
                     enroll = enroll.OrderBy(s => s.Student.LastName);
                     break;
             }
+
             var enrollments = db.Enrollments.Include(s => s.Course).Include(s => s.Student);
             return View(enroll.ToList());
         }

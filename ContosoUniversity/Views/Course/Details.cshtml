@@ -4,33 +4,33 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<div class="page-header">
+    <h2>Details <small>Course</small></h2>
+</div>
 
 <div>
-    <h4>Course</h4>
-    <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.CourseID)
+        <dt style="margin-bottom: 5px;">
+            @Html.DisplayNameFor(model => model.CourseID):
         </dt>
 
-        <dd>
+        <dd style="margin-bottom: 5px;">
             @Html.DisplayFor(model => model.CourseID)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
+        <dt style="margin-bottom: 5px;">
+            @Html.DisplayNameFor(model => model.Title):
         </dt>
 
-        <dd>
+        <dd style="margin-bottom: 5px;">
             @Html.DisplayFor(model => model.Title)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Credits)
+        <dt style="margin-bottom: 5px;">
+            @Html.DisplayNameFor(model => model.Credits):
         </dt>
 
-        <dd>
+        <dd style="margin-bottom: 5px;">
             @Html.DisplayFor(model => model.Credits)
         </dd>
 

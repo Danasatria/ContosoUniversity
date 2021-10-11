@@ -6,11 +6,13 @@
     ViewBag.Title = "Student Body Statistics";
 }
 
-<h2>Student Body Statistics</h2>
+<div class="page-header">
+    <h2>Students <small>Body Statistics</small></h2>
+</div>
 @using (Html.BeginForm("About", "Home", FormMethod.Get))
 {
     <p>
-        Find by Student or Y-M-d: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <small>Find by Student or Y-M-d:</small> @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
         <input class="btn btn-info btn-sm" type="submit" value="Search" /> |
         <a>@Html.ActionLink("Back to Full List", "About", "Home")</a>
     </p>
