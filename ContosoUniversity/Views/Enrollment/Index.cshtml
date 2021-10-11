@@ -14,43 +14,47 @@
 @using (Html.BeginForm("Index", "Enrollment", FormMethod.Get))
 {
     <p>
-        Search: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
-        <input type="submit" value="Search" /> |
+        Find by Title or Lastname: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input class="btn btn-info btn-sm" type="submit" value="Search"/> |
         <a>@Html.ActionLink("Back to Full List", "Index", "Enrollment")</a>
     </p>
 }
-<table class="table">
-    <tr>
-        <th>
-            @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParm, currentFilter = ViewBag.CurrentFilter })
-        </th>
-        <th>
-            @Html.ActionLink("Lastname", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
-        </th>
-        <th>
-            @Html.ActionLink("Grade", "Index", new { sortOrder = ViewBag.GradeSortParm, currentFilter = ViewBag.CurrentFilter })
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Student.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Grade)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.EnrollmentID }) |
-                @Html.ActionLink("Details", "Details", new { id = item.EnrollmentID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.EnrollmentID })
-            </td>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <tr class="info">
+            <th>
+                @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Lastname", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Grade", "Index", new { sortOrder = ViewBag.GradeSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th class="text-center">
+                Action
+            </th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Course.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Grade)
+                </td>
+                <td class="text-center">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.EnrollmentID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.EnrollmentID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.EnrollmentID })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

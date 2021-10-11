@@ -81,6 +81,8 @@ namespace ContosoUniversity.Controllers
         // GET: Student/Create
         public ActionResult Create()
         {
+            ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title");
+            ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName");
             return View();
         }
 

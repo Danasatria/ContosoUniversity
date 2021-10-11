@@ -10,30 +10,33 @@
 @using (Html.BeginForm("About", "Home", FormMethod.Get))
 {
     <p>
-        Find by Student or Y-M-d : @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
-        <input type="submit" value="Search" /> |
+        Find by Student or Y-M-d: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input class="btn btn-info btn-sm" type="submit" value="Search" /> |
         <a>@Html.ActionLink("Back to Full List", "About", "Home")</a>
     </p>
 }
-<table class="table">
-    <tr>
-        <th>
-            @Html.ActionLink("Enrollment Date", "About", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
-        </th>
-        <th>
-            @Html.ActionLink("Students", "About", new { sortOrder = ViewBag.IntSortParm, currentFilter = ViewBag.CurrentFilter })
-        </th>
-    </tr>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EnrollmentDate)
-            </td>
-            <td>
-                @item.StudentCount
-            </td>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <tr class="info">
+            <th>
+                @Html.ActionLink("Enrollment Date", "About", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Students", "About", new { sortOrder = ViewBag.IntSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
         </tr>
-    }
-</table>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EnrollmentDate)
+                </td>
+                <td>
+                    @item.StudentCount
+                </td>
+            </tr>
+        }
+    </table>
+</div>
